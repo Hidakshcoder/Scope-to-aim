@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VR Box Camera Alignment with Scope</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #000;
+            margin: 0;
+        }
+
+       .container {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            position: relative;
+        }
+
+        video {
+            width: 50%;
+            height: 100vh;
+            object-fit: cover;
+            border: 1px solid #fff;
+        }
+
+       .scope {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            pointer-events: none;
+            display: flex;
+            justify-content: space-between;
+        }
+
+       .scope::before,.scope::after {
+            content: '';
+            width: 50%;
+            height: 100vh;
+            background-image: radial-gradient(circle at center, transparent 0%, transparent 40%, rgba(0, 0, 0, 0.5) 41%, rgba(0, 0, 0, 0.7) 100%);
+            position: relative;
+        }
+
+       .aim-sign {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 20px;
+            height: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+       .aim-sign svg {
+            width: 100%;
+            height: 100%;
+            fill: none;
+            stroke: red;
+            stroke-width: 2;
+        }
+
+        #error-message {
+            color: red;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <video id="video1" autoplay playsinline></video>
+        <video id="video2" autoplay playsinline></video>
+        <div class="scope">
+            <div class="aim-sign">
+                <svg viewBox="0 0 20 20">
+                    <line x1="0" y1="10" x2="20" y2="10" />
+                    <line x1="10" y1="0" x2="10" y2="20" />
+                </svg>
+            </div>
+            <div class="aim-sign">
+                <svg viewBox="0 0 20 20">
+                    <line x1="0" y1="10" x2="20" y2="10" />
+                    <line x1="10" y1="0" x2="10" y2="20" />
+                </svg>
+            </div>
+        </div>
+    </div>
+    <div id="error-message"></div>
+    <script>
+        const video1 = document.getElementById('video1');
+        const video2 = document.getElementById('video2');
+        const errorMessage = document.getElementById('error-message');
+
+        async function startCamera() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+
+                // Assign the same stream to both video elements
+                video1.srcObject = stream;
+                video2.srcObject = stream;
+            } catch (error) {
+                errorMessage.textContent = `Error accessing the camera: ${error.message}`;
+                console.error('Error accessing the camera:', error);
+            }
+        }
+
+        startCamera();
+    </script>
+</body>
+</html>
